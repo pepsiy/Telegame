@@ -1,0 +1,5 @@
+{
+  "name": "Đấu Trường Đúc EXP",
+  "description": "Một game MOBA đa người chơi trên Telegram, nơi EXP hàng ngày của bạn được đúc thành tiền tệ trong game.",
+  "requestFramePermissions": ["geolocation"]
+}

@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string (required)
+    //   - level: integer (required)
+    //   - exp: integer (required)
+    //   - dailyExp: integer (required)
+    //   - currency: number (required)
+    //   - stats: map (hp, atk, def)
+    //   - lastMintDate: string (ISO 8601)
+    //
+    // Collection: battles
+    // Document ID: {battleId}
+    // Fields:
+    //   - id: string
+    //   - players: list (uid, hp, pos)
+    //   - status: string (waiting, active, finished)
+    //   - winner: string
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "dung.young@gmail.com" && request.auth.token.email_verified == true));
+    }
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'level', 'exp', 'dailyExp', 'currency']) &&
+             data.uid is string &&
+             data.displayName is string && data.displayName.size() < 50 &&
+             data.level is int &&
+             data.exp is int &&
+             data.dailyExp is int &&
+             data.currency is number;
+    }
+    function isValidBattle(data) {
+      return data.status in ['waiting', 'active', 'finished'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{uid} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(uid) && isValidUser(request.resource.data);
+      allow update: if isOwner(uid) && isValidUser(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /battles/{battleId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidBattle(request.resource.data);
+      allow update: if isAuthenticated() && isValidBattle(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}

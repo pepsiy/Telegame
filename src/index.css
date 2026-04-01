@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Merriweather", ui-sans-serif, system-ui, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    /* Nền đen gỗ */
+    @apply bg-[#1a0f0a] text-[#fce296] antialiased overflow-hidden select-none;
+    font-feature-settings: "tnum" on, "lnum" on;
+    touch-action: none; /* Khóa cuộn trang web trên điện thoại */
+  }
+}
+
+@layer components {
+  /* Khung viền gỗ kinh điển của VLTK */
+  .vltk-panel {
+    @apply bg-[#2e1c14]/90 border-2 border-[#b89947] shadow-[inset_0_0_20px_rgba(0,0,0,0.8),_0_4px_10px_rgba(0,0,0,0.5)];
+    position: relative;
+  }
+  
+  /* Bốn góc hoa văn vàng đồng */
+  .vltk-panel::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border: 2px solid transparent;
+    background: linear-gradient(45deg, #fce296, #b89947, #fce296) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Nút bấm Gỗ của VLTK */
+  .vltk-btn {
+    @apply relative bg-gradient-to-b from-[#7d4829] to-[#4a2712] border border-[#d4b86a] text-[#fce296] 
+           font-bold shadow-[inset_0_1px_0_rgba(255,255,255,0.2),_0_2px_4px_rgba(0,0,0,0.5)] 
+           transition-all active:scale-95 active:shadow-inner hover:brightness-110 flex items-center justify-center;
+  }
+
+  .vltk-text-title {
+    @apply font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-[#fce296] to-[#b89947] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)];
+  }
+
+  .vltk-glow {
+    @apply shadow-[0_0_15px_rgba(212,184,106,0.5)];
+  }
+
+  /* Kênh chat lịch sử */
+  .vltk-log {
+    @apply bg-black/60 border border-[#b89947]/50 p-2 text-[10px] sm:text-xs text-[#d4b86a] font-mono leading-relaxed;
+    text-shadow: 1px 1px 0 #000;
+  }
+}
+
+/* Ẩn cuộn trên mobile */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#1a0f0a];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#b89947]/50 border border-[#4a2712];
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#b89947];
+}
+
+/* Responsive: Portrait = skill bar dưới cùng dạng cột, Landscape = dạng ngang */

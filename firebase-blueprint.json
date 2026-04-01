@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "Stores player stats, EXP, and currency.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "Telegram display name" },
+        "level": { "type": "integer", "description": "Player level" },
+        "exp": { "type": "integer", "description": "Current EXP" },
+        "dailyExp": { "type": "integer", "description": "EXP earned today" },
+        "currency": { "type": "number", "description": "Minted $EXP currency" },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "hp": { "type": "integer" },
+            "atk": { "type": "integer" },
+            "def": { "type": "integer" }
+          }
+        },
+        "lastMintDate": { "type": "string", "format": "date", "description": "Last date EXP was minted" }
+      },
+      "required": ["uid", "displayName", "level", "exp", "dailyExp", "currency"]
+    },
+    "battles": {
+      "title": "Battle Session",
+      "description": "Active multiplayer battle data.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "players": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uid": { "type": "string" },
+              "hp": { "type": "integer" },
+              "pos": { "type": "object", "properties": { "x": { "type": "number" }, "y": { "type": "number" } } }
+            }
+          }
+        },
+        "status": { "type": "string", "enum": ["waiting", "active", "finished"] },
+        "winner": { "type": "string" }
+      }
+    }
+  },
+  "firestore": {
+    "/users/{uid}": { "schema": "users", "description": "User profiles" },
+    "/battles/{battleId}": { "schema": "battles", "description": "Active battles" }
+  }
+}
